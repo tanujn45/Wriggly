@@ -5,25 +5,32 @@ contract Token {
     address[] authorizedUsers;
 
     constructor() {
-        addAuthorizedUser(msg.sender);
+        authorizedUsers.push(msg.sender);
     }
 
     modifier onlyAuthorized() {
         bool isAuthorized = false;
-        // TODO
+        for (uint256 i = 0; i < authorizedUsers.length; i++) {
+            if (authorizedUsers[i] == msg.sender) {
+                isAuthorized = true;
+                break;
+            }
+        }
         require(isAuthorized, "Unauthorized access");
         _;
     }
 
     function transfer(address recipient, uint256 amount) public onlyAuthorized {
-        // TODO
+        require(balances[msg.sender] >= amount, "Insufficient balance");
+        balances[msg.sender] -= amount;
+        balances[recipient] += amount;
     }
 
     function addAuthorizedUser(address user) public onlyAuthorized {
-        // TODO
+        authorizedUsers.push(user);
     }
 
     function getAuthorizedUsers() public view returns (address[] memory) {
-        // TODO
+        return authorizedUsers;
     }
 }
